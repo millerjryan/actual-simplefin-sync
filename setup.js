@@ -37,7 +37,7 @@ const prompts = [
     message: 'Enter your ActualBudget Budget ID:',
     default: () => getBudgetId(),
     validate: async (i) => {
-      const accounts = await api.runWithBudget(i, loadAccounts)
+      const accounts = await api.loadBudget(i, loadAccounts)
       return accounts.length > 0
     }
   }
@@ -91,7 +91,7 @@ async function initialSetup (token, accessKey, budgetId) {
 
 async function accountSetup (accessKey, budgetId, linkedAccounts, reLinkAccounts) {
   const simpleFINAccounts = await simpleFIN.getAccounts(accessKey)
-  const accounts = (await api.runWithBudget(budgetId, loadAccounts)).filter(f => !!reLinkAccounts || !Object.values(linkedAccounts || {}).find(a => a === f.id))
+  const accounts = (await api.loadBudget(budgetId, loadAccounts)).filter(f => !!reLinkAccounts || !Object.values(linkedAccounts || {}).find(a => a === f.id))
   const accountLinkPrompts = simpleFINAccounts.accounts.filter(f => !!reLinkAccounts || !linkedAccounts[f.id]).map(s => {
     return {
       type: 'list',
