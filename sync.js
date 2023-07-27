@@ -40,7 +40,7 @@ async function run (accessKey, budgetId, linkedAccounts, startDate) {
   _accessKey = accessKey
   _linkedAccounts = linkedAccounts
   _startDate = startDate
-  return await api.runWithBudget(budgetId, sync)
+  return await api.loadBudget(budgetId, sync)
 }
 
 module.exports = { run }
