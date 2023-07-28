@@ -41,7 +41,6 @@ const prompts = [
     validate: async (i) => {
       const budget = await api.loadBudget(budgetId);
       return await api.getAccounts(budget).length > 0;
-}
     }
   }
 ]
