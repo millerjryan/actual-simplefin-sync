@@ -39,8 +39,9 @@ const prompts = [
     message: 'Enter your ActualBudget Budget ID:',
     default: () => getBudgetId(),
     validate: async (i) => {
-      const accounts = await api.loadBudget(i).then(loadAccounts);
-      return accounts.length > 0
+      const budget = await api.loadBudget(budgetId);
+      return await api.getAccounts(budget).length > 0;
+}
     }
   }
 ]
