@@ -1,6 +1,8 @@
 const inquirer = require('inquirer')
 const simpleFIN = require('./simpleFIN')
-const api = require('@actual-app/api')
+const ActualAPI = require('@actual-app/api');
+const api = new ActualAPI();
+
 
 let _token
 let _accessKey
@@ -37,7 +39,7 @@ const prompts = [
     message: 'Enter your ActualBudget Budget ID:',
     default: () => getBudgetId(),
     validate: async (i) => {
-      const accounts = await api.loadBudget(i, loadAccounts)
+      const accounts = await api.loadBudget(i).then(loadAccounts);
       return accounts.length > 0
     }
   }
