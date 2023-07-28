@@ -38,8 +38,8 @@ const prompts = [
     name: 'budgetId',
     message: 'Enter your ActualBudget Budget ID:',
     default: () => getBudgetId(),
-    console.log('Budget: ', i);
     validate: async (i) => {
+      console.log('Budget: ', i);
       const budget = await api.loadBudget(i);
       console.log('Calling Budget');
       return await api.getAccounts(budget).length > 0;
