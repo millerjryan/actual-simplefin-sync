@@ -2,11 +2,11 @@ const inquirer = require('inquirer')
 const simpleFIN = require('./simpleFIN')
 const api = require('@actual-app/api');
 
-
-
 let _token
 let _accessKey
 let _budgetId
+
+console.log('Inquirer, SimpleFIN and API modules loaded.');
 
 const prompts = [
   {
@@ -40,13 +40,18 @@ const prompts = [
     default: () => getBudgetId(),
     validate: async (i) => {
       const budget = await api.loadBudget(i);
+      console.log('Calling Budget');
       return await api.getAccounts(budget).length > 0;
+      console.log('Calling Accounts');
     }
   }
 ]
 
-async function loadAccounts () {
-  return await api.getAccounts()
+async function loadAccounts() {
+  console.log('About to load accounts.');
+  const accounts = await api.getAccounts();
+  console.log('Accounts loaded: ', accounts);
+  return accounts;
 }
 
 function getChoices (answers, accounts) {
@@ -83,17 +88,23 @@ function getBudgetId () {
   return _budgetId
 }
 
-async function initialSetup (token, accessKey, budgetId) {
-  _token = token
-  _accessKey = accessKey
-  _budgetId = budgetId
-  const initialSetup = await inquirer.prompt(prompts)
-  return initialSetup
+async function initialSetup(token, accessKey, budgetId) {
+  console.log('Initiating setup...');
+  _token = token;
+  _accessKey = accessKey;
+  _budgetId = budgetId;
+  console.log('Prompting user for input...');
+  const initialSetup = await inquirer.prompt(prompts);
+  console.log('User input received: ', initialSetup);
+  return initialSetup;
 }
 
 async function accountSetup (accessKey, budgetId, linkedAccounts, reLinkAccounts) {
+  console.log('Starting account setup...');
   const simpleFINAccounts = await simpleFIN.getAccounts(accessKey)
+  console.log('SimpleFIN Accounts: ', simpleFINAccounts);
   const accounts = (await api.loadBudget(budgetId).then.api.getAccounts()).filter(f => !!reLinkAccounts || !Object.values(linkedAccounts || {}).find(a => a === f.id))
+  console.log('ActualBudget accounts: ', accounts);
   const accountLinkPrompts = simpleFINAccounts.accounts.filter(f => !!reLinkAccounts || !linkedAccounts[f.id]).map(s => {
     return {
       type: 'list',
@@ -109,5 +120,7 @@ async function accountSetup (accessKey, budgetId, linkedAccounts, reLinkAccounts
   const nullsRemoved = Object.fromEntries(Object.entries(linkedAccounts).filter(([_, v]) => v != null))
   return nullsRemoved
 }
+
+console.log('Setup module loaded.');
 
 module.exports = { initialSetup, accountSetup }
