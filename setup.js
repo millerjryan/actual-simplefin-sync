@@ -1,7 +1,7 @@
 const inquirer = require('inquirer')
 const simpleFIN = require('./simpleFIN')
-const ActualAPI = require('@actual-app/api');
-const api = new ActualAPI();
+const api = require('@actual-app/api');
+
 
 
 let _token
