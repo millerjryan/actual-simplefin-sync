@@ -1,5 +1,6 @@
 const simpleFIN = require('./simpleFIN')
-const api = require('@actual-app/api')
+const ActualAPI = require('@actual-app/api');
+const api = new ActualAPI();
 
 let _accessKey
 let _linkedAccounts
