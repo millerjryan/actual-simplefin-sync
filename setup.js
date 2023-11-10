@@ -5,8 +5,6 @@ const api = require('@actual-app/api');
 let _token
 let _accessKey
 let _budgetId
-let _serverUrl
-let _serverPassword
 
 console.log('Inquirer, SimpleFIN and API modules loaded.');
 
@@ -37,24 +35,14 @@ const prompts = [
   },
   {
     type: 'input',
-    name: 'actualBudgetServerURL',
-    message: 'Enter your ActualBudget Server URL:',
-  },
-  {
-    type: 'input',
-    name: 'actualBudgetServerPassword',
-    message: 'Enter your ActualBudget Server Password:',
-  },
-  {
-    type: 'input',
     name: 'budgetId',
     message: 'Enter your ActualBudget Budget ID:',
     default: () => getBudgetId(),
     validate: async (i) => {
 
       await api.init({ 
-        serverURL: actualBudgetServerURL,
-        password: actualBudgetServerPassword,
+        serverURL: 'actual budget url',
+        password: 'actual budget password',
       });
 
       console.log('Budget: ', i);
@@ -107,13 +95,11 @@ function getBudgetId () {
   return _budgetId
 }
 
-async function initialSetup(token, accessKey, budgetId, serverUrl, serverPassword) {
+async function initialSetup(token, accessKey, budgetId) {
   console.log('Initiating setup...');
   _token = token;
   _accessKey = accessKey;
   _budgetId = budgetId;
-  _serverUrl = serverUrl;
-  _serverPassword = serverPassword;
   console.log('Prompting user for input...');
   const initialSetup = await inquirer.prompt(prompts);
   console.log('User input received: ', initialSetup);
