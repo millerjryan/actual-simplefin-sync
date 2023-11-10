@@ -8,21 +8,27 @@ async function run () {
   let token = nconf.get('simpleFIN:token')
   let accessKey = nconf.get('simpleFIN:accessKey')
   let budgetId = nconf.get('actual:budgetId')
+  let serverUrl = nconf.get('actual:serverUrl')
+  let serverPassword = nconf.get('actual:serverPassword')
   let linkedAccounts = nconf.get('linkedAccounts') || []
 
   const setupRequired = !!nconf.get('setup') || !accessKey || !budgetId
   const linkRequired = setupRequired || !!nconf.get('link') || !linkedAccounts
 
   if (setupRequired) {
-    const initialSetup = await setup.initialSetup(token, accessKey, budgetId)
+    const initialSetup = await setup.initialSetup(token, accessKey, budgetId, serverUrl, serverPassword)
 
     token = initialSetup.token
     accessKey = initialSetup.accessKey
     budgetId = initialSetup.budgetId
+    serverUrl = initialSetup.serverUrl
+    serverPassword = initialSetup.serverPassword
 
     nconf.set('simpleFIN:token', token)
     nconf.set('simpleFIN:accessKey', accessKey)
     nconf.set('actual:budgetId', budgetId)
+    nconf.set('actual:serverUrl', serverUrl)
+    nconf.set('actual:serverPassword', serverPassword)
     nconf.save()
   }
 
@@ -38,7 +44,7 @@ async function run () {
     startDate = new Date(lastSync)
     startDate.setDate(startDate.getDate() - 5)
   }
-  await sync.run(accessKey, budgetId, linkedAccounts, startDate)
+  await sync.run(accessKey, budgetId, linkedAccounts, startDate, serverUrl, serverPassword)
   nconf.set('lastSync', new Date().toDateString())
   nconf.save()
   console.log('Complete')
