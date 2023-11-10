@@ -5,13 +5,9 @@ const api = require('@actual-app/api');
 let _accessKey
 let _linkedAccounts
 let _startDate
-let _serverUrl
-let _serverPassword
 
 async function sync () {
-  console.log('Getting all accounts and transactions from ActualBudget')
   const allAccounts = await api.getAccounts()
-  console.log('Getting all transactions from SimpleFIN')
   const allTrans = await simpleFIN.getTransactions(_accessKey, _startDate)
   console.log('_____________________________________________________')
   console.log('|          Account          |   Added   |  Updated  |')
@@ -33,8 +29,8 @@ async function sync () {
     try {
       
       await api.init({ 
-        serverURL: _serverUrl,
-        password: _serverPassword,
+        serverURL: 'actual budget url',
+        password: 'actual budget password',
       });
 
       const importedTransactions = await api.importTransactions(accountId, transactions)
@@ -51,33 +47,19 @@ async function sync () {
   
 }
 
-async function run (accessKey, budgetId, linkedAccounts, startDate, serverUrl, serverPassword) {
+async function run (accessKey, budgetId, linkedAccounts, startDate) {
   _accessKey = accessKey
   _linkedAccounts = linkedAccounts
   _startDate = startDate
-  _serverUrl = serverUrl
-  _serverPassword = serverPassword
 
-  if(!_serverUrl || !_serverPassword) {
-    throw new Error('Server URL or password not set')
-  } else {
-    console.log('Server information set')
-  }
-  console.log(`Budget ID: ${budgetId}`)
+  console.log(budgetId)
 
   await api.init({ 
-    serverURL: serverUrl,
-    password: serverPassword,
+    serverURL: 'actual budget url',
+    password: 'actual budget password',
   });
 
-  console.log('Downloading budget')
-  try {
-    await api.downloadBudget(budgetId);
-  } catch (e) {
-    console.log(e.message)
-    throw e
-  }
-  console.log('Budget downloaded')
+  await api.downloadBudget(budgetId);
 
   sync()
 
