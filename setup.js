@@ -39,21 +39,27 @@ const prompts = [
     message: 'Enter your ActualBudget Budget ID:',
     default: () => getBudgetId(),
     validate: async (i) => {
+
+      await api.init({ 
+        serverURL: 'actual budget url',
+        password: 'actual budget password',
+      });
+
       console.log('Budget: ', i);
-      const budget = await api.loadBudget(i);
-      console.log('Calling Budget');
-      return await api.getAccounts(budget).length > 0;
-      console.log('Calling Accounts');
+      //const budget = await api.loadBudget(i);
+
+      await api.downloadBudget(i);
+
+      accounts = await api.getAccounts();
+
+      if(accounts.length > 0) {
+        return true
+      } else {
+        return false
+      }
     }
   }
 ]
-
-async function loadAccounts() {
-  console.log('About to load accounts.');
-  const accounts = await api.getAccounts();
-  console.log('Accounts loaded: ', accounts);
-  return accounts;
-}
 
 function getChoices (answers, accounts) {
   const ret = accounts.filter(f => !Object.values(answers).find(a => a === f.id)).map(a => {
@@ -104,7 +110,7 @@ async function accountSetup (accessKey, budgetId, linkedAccounts, reLinkAccounts
   console.log('Starting account setup...');
   const simpleFINAccounts = await simpleFIN.getAccounts(accessKey)
   console.log('SimpleFIN Accounts: ', simpleFINAccounts);
-  const accounts = (await api.loadBudget(budgetId).then.api.getAccounts()).filter(f => !!reLinkAccounts || !Object.values(linkedAccounts || {}).find(a => a === f.id))
+  const accounts = (await api.getAccounts()).filter(f => !!reLinkAccounts || !Object.values(linkedAccounts || {}).find(a => a === f.id))
   console.log('ActualBudget accounts: ', accounts);
   const accountLinkPrompts = simpleFINAccounts.accounts.filter(f => !!reLinkAccounts || !linkedAccounts[f.id]).map(s => {
     return {
