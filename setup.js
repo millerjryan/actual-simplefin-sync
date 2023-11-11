@@ -37,39 +37,22 @@ const prompts = [
   },
   {
     type: 'input',
-    name: 'actualBudgetServerURL',
+    name: 'serverUrl',
+    default: () => getServerUrl(),
     message: 'Enter your ActualBudget Server URL:',
   },
   {
     type: 'input',
-    name: 'actualBudgetServerPassword',
+    name: 'serverPassword',
+    default: () => getServerPassword(),
     message: 'Enter your ActualBudget Server Password:',
+
   },
   {
     type: 'input',
     name: 'budgetId',
-    message: 'Enter your ActualBudget Budget ID:',
     default: () => getBudgetId(),
-    validate: async (i) => {
-
-      await api.init({ 
-        serverURL: actualBudgetServerURL,
-        password: actualBudgetServerPassword,
-      });
-
-      console.log('Budget: ', i);
-      //const budget = await api.loadBudget(i);
-
-      await api.downloadBudget(i);
-
-      accounts = await api.getAccounts();
-
-      if(accounts.length > 0) {
-        return true
-      } else {
-        return false
-      }
-    }
+    message: 'Enter your ActualBudget Budget ID:'
   }
 ]
 
@@ -101,6 +84,14 @@ function getToken () {
 
 function getAccessKey () {
   return _accessKey
+}
+
+function getServerPassword () {
+  return _serverPassword
+}
+
+function getServerUrl () {
+  return _serverUrl
 }
 
 function getBudgetId () {
