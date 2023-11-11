@@ -2,9 +2,13 @@ const setup = require('./setup')
 const sync = require('./sync')
 const nconf = require('nconf')
 const api = require('@actual-app/api');
-
+const {
+  initialize,
+} = require("./setup.js");
 
 nconf.argv().env().file({ file: './config.json' })
+
+let actualInstance
 
 async function run () {
   let token = nconf.get('simpleFIN:token')
@@ -30,30 +34,46 @@ async function run () {
     nconf.set('simpleFIN:accessKey', accessKey)
     nconf.set('actual:budgetId', budgetId)
 
-    await api.init({ 
-      serverURL: serverUrl,
-      password: serverPassword,
-    });
+    actualConfig = {
+      budgetId: budgetId,
+      serverUrl: serverUrl,
+      serverPassword: serverPassword
+    }
+
+    if (!actualInstance) {
+      actualInstance = await initialize(actualConfig);
+    }
+
 
     console.log('Budget: ', budgetId);
 
-    await api.downloadBudget(budgetId);
+    await actualInstance.downloadBudget(budgetId);
 
-    accounts = await api.getAccounts();
+    accounts = await actualInstance.getAccounts();
 
     if(accounts.length > 0) {
       nconf.set('actual:serverUrl', serverUrl)
       nconf.set('actual:serverPassword', serverPassword)
       
     } else {
-      console.log('Issue with your Actual Budget Server URL and Password, please try again')
+      throw new Error('Actual Budget Error: serverUrl and serverPassword are required');
     }
    
     await nconf.save()
   }
 
   if (linkRequired) {
-    linkedAccounts = await setup.accountSetup(accessKey, budgetId, linkedAccounts, linkRequired)
+    actualConfig = {
+      budgetId: budgetId,
+      serverUrl: serverUrl,
+      serverPassword: serverPassword
+    }
+
+    if (!actualInstance) {
+      actualInstance = await initialize(actualConfig);
+    }
+
+    linkedAccounts = await setup.accountSetup(accessKey, actualInstance, linkedAccounts, linkRequired)
     nconf.set('linkedAccounts', linkedAccounts)
     nconf.save()
   }
