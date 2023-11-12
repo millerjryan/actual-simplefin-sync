@@ -7,7 +7,7 @@ Sync [ActualBudget](https://actualbudget.com/) via [SimpleFIN](https://beta-brid
   - Once you get everything running, you may (optionally) configure a system cron to run this automatically.
 
 ## IMPORTANT NOTES
- - SimpleFin data updates one time / day, for each linked account. The time that it updates may vary, even from day to day (based on the bank and upstream provider, MX). I'd suggest a 2 or 3 hour cron, if using cron.
+ - SimpleFin data updates one time / day, for each linked account. The time that it updates may vary, even from day to day (based on the bank and upstream provider, MX).
  - The first run syncs back to the start of the current month. I would reconcile all accounts up to the start of the current month, either manually or via CSV import, and then run this.
  - You will want to check (for the first run) for any transactions right around the 1st of the current month, to make sure nothing is left out.
  - Future runs start from 5 days prior to the previous run, to catch any that processed later. No duplicate transactions will be created in Actual.
