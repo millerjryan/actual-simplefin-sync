@@ -149,6 +149,9 @@ dist
 .history
 .ionide
 
+# Exclude all subfolders
+*/
+
 # Support for Project snippet scope
 !.vscode/*.code-snippets
 
