@@ -111,11 +111,11 @@ async function initialSetup(token, accessKey, budgetId, serverUrl, serverPasswor
   return initialSetup;
 }
 
-async function accountSetup (accessKey, budgetId, linkedAccounts, reLinkAccounts) {
+async function accountSetup(accessKey, actualInstance, linkedAccounts, reLinkAccounts) {
   console.log('Starting account setup...');
   const simpleFINAccounts = await simpleFIN.getAccounts(accessKey)
   console.log('SimpleFIN Accounts: ', simpleFINAccounts);
-  const accounts = (await api.getAccounts()).filter(f => !!reLinkAccounts || !Object.values(linkedAccounts || {}).find(a => a === f.id))
+  const accounts = (await actualInstance.getAccounts()).filter(f => !!reLinkAccounts || !Object.values(linkedAccounts || {}).find(a => a === f.id))
   console.log('ActualBudget accounts: ', accounts);
   const accountLinkPrompts = simpleFINAccounts.accounts.filter(f => !!reLinkAccounts || !linkedAccounts[f.id]).map(s => {
     return {
@@ -133,6 +133,49 @@ async function accountSetup (accessKey, budgetId, linkedAccounts, reLinkAccounts
   return nullsRemoved
 }
 
+async function initialize(config = [], overwriteExistingConfig = true) {
+  if (!_serverUrl || overwriteExistingConfig) {
+    if(config.serverUrl) {
+      _serverUrl = config.serverUrl;
+      console.log('Updated Actual Config: serverUrl')
+    } else {
+      throw new Error('Actual Budget Error: serverUrl is required');
+    }
+  }
+  if (!_serverPassword || overwriteExistingConfig) {
+    if(config.serverPassword) {
+      _serverPassword = config.serverPassword;
+      console.log('Updated Actual Config: serverPassword')
+    } else {
+      throw new Error('Actual Budget Error: serverPassword is required');
+    }
+  }
+  if (!_budgetId || overwriteExistingConfig) {
+    if(config.budgetId) {
+      _budgetId = config.budgetId;
+      console.log('Updated Actual Config: budgetId')
+    } else {
+      throw new Error('Actual Budget Error: budgetId is required');
+    }
+  }
+
+  console.log('Initializing Actual Budget...');
+  try {
+    await api.init({
+      serverURL: actualConfig.serverUrl || _serverUrl,
+      password: actualConfig.serverPassword || _serverPassword,
+    });
+
+    let id = actualConfig.budgetId || _budgetId;
+
+    await api.downloadBudget(id);
+  } catch (e) {
+    throw new Error(`Actual Budget Error: ${e.message}`);
+  }
+  console.log('Actual Budget initialized.');
+  return api;
+}
+
 console.log('Setup module loaded.');
 
-module.exports = { initialSetup, accountSetup }
+module.exports = { initialSetup, accountSetup, initialize }
