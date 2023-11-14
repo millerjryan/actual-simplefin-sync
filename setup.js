@@ -52,7 +52,13 @@ const prompts = [
     type: 'input',
     name: 'budgetId',
     default: () => getBudgetId(),
-    message: 'Enter your ActualBudget Budget ID:'
+    message: 'Enter your ActualBudget Sync ID:'
+  },
+  {
+    type: 'input',
+    name: 'budgetEncryption',
+    default: () => getBudgetEncryption(),
+    message: 'Enter your ActualBudget Budget Encryption Password (leave blank if not encrypted):'
   }
 ]
 
@@ -98,11 +104,16 @@ function getBudgetId () {
   return _budgetId
 }
 
-async function initialSetup(token, accessKey, budgetId, serverUrl, serverPassword) {
+function getBudgetEncryption () {
+  return _budgetEncryption
+}
+
+async function initialSetup(token, accessKey, budgetId, budgetEncryption, serverUrl, serverPassword) {
   console.log('Initiating setup...');
   _token = token;
   _accessKey = accessKey;
   _budgetId = budgetId;
+  _budgetEncryption = budgetEncryption;
   _serverUrl = serverUrl;
   _serverPassword = serverPassword;
   console.log('Prompting user for input...');
@@ -158,6 +169,10 @@ async function initialize(config = [], overwriteExistingConfig = true) {
       throw new Error('Actual Budget Error: budgetId is required');
     }
   }
+  if (overwriteExistingConfig) {
+    _budgetEncryption = config.budgetEncryption
+    console.log('Updated Actual Config: budgetId')
+  }
 
   console.log('Initializing Actual Budget...');
   try {
@@ -167,8 +182,9 @@ async function initialize(config = [], overwriteExistingConfig = true) {
     });
 
     let id = actualConfig.budgetId || _budgetId;
+    let budgetEncryption = actualConfig.budgetEncryption || _budgetEncryption;
 
-    await api.downloadBudget(id);
+    await api.downloadBudget(id,  {password: budgetEncryption});
   } catch (e) {
     throw new Error(`Actual Budget Error: ${e.message}`);
   }

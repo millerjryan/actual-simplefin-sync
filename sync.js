@@ -7,6 +7,7 @@ let _linkedAccounts
 let _startDate
 let _serverUrl
 let _serverPassword
+let _budgetEncryption
 
 async function sync () {
   console.log('Getting all accounts and transactions from ActualBudget')
@@ -51,12 +52,13 @@ async function sync () {
   
 }
 
-async function run (accessKey, budgetId, linkedAccounts, startDate, serverUrl, serverPassword) {
+async function run (accessKey, budgetId, budgetEncryption, linkedAccounts, startDate, serverUrl, serverPassword) {
   _accessKey = accessKey
   _linkedAccounts = linkedAccounts
   _startDate = startDate
   _serverUrl = serverUrl
   _serverPassword = serverPassword
+  _budgetEncryption = budgetEncryption
 
   if(!_serverUrl || !_serverPassword) {
     throw new Error('Server URL or password not set')
@@ -72,7 +74,7 @@ async function run (accessKey, budgetId, linkedAccounts, startDate, serverUrl, s
 
   console.log('Downloading budget')
   try {
-    await api.downloadBudget(budgetId);
+    await api.downloadBudget(budgetId,  {password: budgetEncryption});
   } catch (e) {
     console.log(e.message)
     throw e
