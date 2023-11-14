@@ -39,6 +39,7 @@ async function run () {
 
     actualConfig = {
       budgetId: budgetId,
+      budgetEncryption: budgetEncryption,
       serverUrl: serverUrl,
       serverPassword: serverPassword
     }
@@ -68,6 +69,7 @@ async function run () {
   if (linkRequired) {
     actualConfig = {
       budgetId: budgetId,
+      budgetEncryption: budgetEncryption,
       serverUrl: serverUrl,
       serverPassword: serverPassword
     }

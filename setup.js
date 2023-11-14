@@ -5,6 +5,7 @@ const api = require('@actual-app/api');
 let _token
 let _accessKey
 let _budgetId
+let _budgetEncryption
 let _serverUrl
 let _serverPassword
 
@@ -169,9 +170,9 @@ async function initialize(config = [], overwriteExistingConfig = true) {
       throw new Error('Actual Budget Error: budgetId is required');
     }
   }
-  if (overwriteExistingConfig) {
+  if (!_budgetEncryption || overwriteExistingConfig) {
     _budgetEncryption = config.budgetEncryption
-    console.log('Updated Actual Config: budgetId')
+    console.log('Updated Actual Config: budgetEncryption')
   }
 
   console.log('Initializing Actual Budget...');
