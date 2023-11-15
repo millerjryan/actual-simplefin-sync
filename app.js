@@ -17,9 +17,10 @@ async function run () {
   let budgetEncryption = nconf.get('actual:budgetEncryption') || ''
   let serverUrl = nconf.get('actual:serverUrl') || ''
   let serverPassword = nconf.get('actual:serverPassword') || ''
+  let serverValidated = nconf.get('actual:serverValidated') || ''
   let linkedAccounts = nconf.get('linkedAccounts') || []
 
-  const setupRequired = !!nconf.get('setup') || !accessKey || !budgetId
+  const setupRequired = !!nconf.get('setup') || !accessKey || !budgetId || !serverUrl || !serverPassword || !serverValidated
   const linkRequired = setupRequired || !!nconf.get('link') || !linkedAccounts
 
   if (setupRequired) {
@@ -36,6 +37,10 @@ async function run () {
     nconf.set('simpleFIN:accessKey', accessKey)
     nconf.set('actual:budgetId', budgetId)
     nconf.set('actual:budgetEncryption', budgetEncryption)
+    nconf.set('actual:serverUrl', serverUrl)
+    nconf.set('actual:serverPassword', serverPassword)
+
+    await nconf.save()
 
     actualConfig = {
       budgetId: budgetId,
@@ -55,15 +60,16 @@ async function run () {
 
     accounts = await actualInstance.getAccounts();
 
-    if(accounts.length > 0) {
-      nconf.set('actual:serverUrl', serverUrl)
-      nconf.set('actual:serverPassword', serverPassword)
-      
-    } else {
-      throw new Error('Actual Budget Error: serverUrl and serverPassword are required');
+    if(accounts.length <= 0) {
+
+      throw new Error('Be sure that your Actual Budget URL and Server are set correctly, that your Budget has at least one created Account. ');
+
     }
-   
+
+    nconf.set('actual:serverValidated', 'yes')
+
     await nconf.save()
+   
   }
 
   if (linkRequired) {
