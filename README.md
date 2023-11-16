@@ -33,3 +33,11 @@ Sync [ActualBudget](https://actualbudget.com/) via [SimpleFIN](https://beta-brid
     ```
     node app.js --link
     ```
+    
+## TROUBLESHOOTING
+
+- I've had some users report trouble using .local addresses to connect. If you run into this and are able, a reverse proxy might be of assistance.
+
+- I've had a couple users report segfaults using Node v21.x. I haven't been able to recreate, but for those that have, switching to Node 20.x, deleting and re-cloning, and setting up again (with a new SimpleFin setup token) has fixed the issue both times.
+
+- Be sure you have a budget, with encryption password (or leave blank with none), that has at least 1 account. You MUST have at least 1 account created, so you have something to map SimpleFin accounts to.
