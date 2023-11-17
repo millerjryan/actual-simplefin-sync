@@ -99,6 +99,8 @@ async function run () {
   nconf.set('lastSync', new Date().toDateString())
   nconf.save()
   console.log('Complete')
+  process.exit()
+
 }
 
 run()

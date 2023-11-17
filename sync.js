@@ -47,8 +47,6 @@ async function sync () {
     }
   }
   console.log('¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯')
-
-  process.exit()
   
 }
 
@@ -81,8 +79,15 @@ async function run (accessKey, budgetId, budgetEncryption, linkedAccounts, start
   }
   console.log('Budget downloaded')
 
-  sync()
-
+  await sync()
+  
+  console.log('Re-downloading budget to force sync.')
+  try {
+    await api.downloadBudget(budgetId,  {password: budgetEncryption});
+  } catch (e) {
+    console.log(e.message)
+    throw e
+  }
 }
 
 module.exports = { run }
