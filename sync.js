@@ -7,13 +7,30 @@ let _linkedAccounts
 let _startDate
 let _serverUrl
 let _serverPassword
+let _budgetId
 let _budgetEncryption
 
 async function sync () {
+
+  await api.init({ 
+    serverURL: _serverUrl,
+    password: _serverPassword,
+  });
+
+  console.log('Downloading budget')
+  try {
+    await api.downloadBudget(_budgetId,  {password: _budgetEncryption});
+  } catch (e) {
+    console.log(e.message)
+    throw e
+  }
+  console.log('Budget downloaded')
+
   console.log('Getting all accounts and transactions from ActualBudget')
   const allAccounts = await api.getAccounts()
   console.log('Getting all transactions from SimpleFIN')
   const allTrans = await simpleFIN.getTransactions(_accessKey, _startDate)
+
   console.log('_____________________________________________________')
   console.log('|          Account          |   Added   |  Updated  |')
   console.log('+---------------------------+-----------+-----------+')
@@ -33,10 +50,7 @@ async function sync () {
       })
     try {
       
-      await api.init({ 
-        serverURL: _serverUrl,
-        password: _serverPassword,
-      });
+
 
       const importedTransactions = await api.importTransactions(accountId, transactions)
       const accountName = allAccounts.find(f => f.id === accountId).name
@@ -47,6 +61,15 @@ async function sync () {
     }
   }
   console.log('¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯')
+  console.log('Re-downloading budget to force sync.')
+  try {
+    await api.downloadBudget(_budgetId,  {password:_budgetEncryption});
+  } catch (e) {
+    console.log(e.message)
+    throw e
+  }
+  //console.log(api.init)
+  api.shutdown()
   
 }
 
@@ -56,6 +79,7 @@ async function run (accessKey, budgetId, budgetEncryption, linkedAccounts, start
   _startDate = startDate
   _serverUrl = serverUrl
   _serverPassword = serverPassword
+  _budgetId = budgetId
   _budgetEncryption = budgetEncryption
 
   if(!_serverUrl || !_serverPassword) {
@@ -65,29 +89,8 @@ async function run (accessKey, budgetId, budgetEncryption, linkedAccounts, start
   }
   console.log(`Budget ID: ${budgetId}`)
 
-  await api.init({ 
-    serverURL: serverUrl,
-    password: serverPassword,
-  });
-
-  console.log('Downloading budget')
-  try {
-    await api.downloadBudget(budgetId,  {password: budgetEncryption});
-  } catch (e) {
-    console.log(e.message)
-    throw e
-  }
-  console.log('Budget downloaded')
-
   await sync()
-  
-  console.log('Re-downloading budget to force sync.')
-  try {
-    await api.downloadBudget(budgetId,  {password: budgetEncryption});
-  } catch (e) {
-    console.log(e.message)
-    throw e
-  }
+
 }
 
 module.exports = { run }
