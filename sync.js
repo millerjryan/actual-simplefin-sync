@@ -77,7 +77,7 @@ async function sync () {
     console.log(e.message)
     throw e
   }
-  api.shutdown()
+  await api.shutdown()
   
 }
 

@@ -90,6 +90,11 @@ async function run () {
     nconf.set('linkedAccounts', linkedAccounts)
     nconf.save()
   }
+
+  if(actualInstance) {
+    await actualInstance.shutdown()
+  }
+
   const lastSync = nconf.get('lastSync')
   let startDate
   if (lastSync) {
