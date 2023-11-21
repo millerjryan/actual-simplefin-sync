@@ -97,10 +97,15 @@ async function run () {
     startDate = new Date(lastSync)
     startDate.setDate(startDate.getDate() - 5)
   }
+
+  budgetspath = __dirname+'/budgets'
+  fsExtra.emptyDirSync(budgetspath);
+
   await sync.run(accessKey, budgetId, budgetEncryption, linkedAccounts, startDate, serverUrl, serverPassword)
   nconf.set('lastSync', new Date().toDateString())
   nconf.save()
 
+  console.log('Clearing temporary budget files.')
   budgetspath = __dirname+'/budgets'
   fsExtra.emptyDirSync(budgetspath);
 
