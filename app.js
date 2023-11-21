@@ -2,6 +2,8 @@ const setup = require('./setup')
 const sync = require('./sync')
 const nconf = require('nconf')
 const api = require('@actual-app/api');
+const fsExtra = require('fs-extra');
+
 const {
   initialize,
 } = require("./setup.js");
@@ -98,6 +100,10 @@ async function run () {
   await sync.run(accessKey, budgetId, budgetEncryption, linkedAccounts, startDate, serverUrl, serverPassword)
   nconf.set('lastSync', new Date().toDateString())
   nconf.save()
+
+  budgetspath = __dirname+'/budgets'
+  fsExtra.emptyDirSync(budgetspath);
+
   console.log('Complete')
   process.exit()
 

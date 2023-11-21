@@ -1,7 +1,6 @@
 const simpleFIN = require('./simpleFIN')
 const api = require('@actual-app/api');
 
-
 let _accessKey
 let _linkedAccounts
 let _startDate
@@ -12,7 +11,17 @@ let _budgetEncryption
 
 async function sync () {
 
+  const { mkdir } = require('fs').promises;
+
+  budgetspath = __dirname+'/budgets'
+
+  try {
+    await mkdir(budgetspath);
+  } catch (e) {}
+
+
   await api.init({ 
+    dataDir: budgetspath,
     serverURL: _serverUrl,
     password: _serverPassword,
   });
@@ -68,7 +77,6 @@ async function sync () {
     console.log(e.message)
     throw e
   }
-  //console.log(api.init)
   api.shutdown()
   
 }

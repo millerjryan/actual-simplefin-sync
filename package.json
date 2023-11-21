@@ -10,7 +10,8 @@
   "dependencies": {
     "@actual-app/api": "^6.1.1",
     "inquirer": "^8.2.0",
-    "nconf": "^0.11.3"
+    "nconf": "^0.11.3",
+    "fs-extra": "^10.1.0"
   },
   "devDependencies": {
     "standard": "^16.0.4"
