@@ -140,6 +140,9 @@ async function accountSetup(accessKey, actualInstance, linkedAccounts, reLinkAcc
     }
   })
   const accountLinks = await inquirer.prompt(accountLinkPrompts)
+  
+  await actualInstance.shutdown()
+  
   Object.assign(linkedAccounts, accountLinks)
   const nullsRemoved = Object.fromEntries(Object.entries(linkedAccounts).filter(([_, v]) => v != null))
   return nullsRemoved

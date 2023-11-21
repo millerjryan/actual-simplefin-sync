@@ -111,7 +111,6 @@ async function run () {
   nconf.save()
 
   console.log('Clearing temporary budget files.')
-  budgetspath = __dirname+'/budgets'
   fsExtra.emptyDirSync(budgetspath);
 
   console.log('Complete')
