@@ -66,7 +66,7 @@ const prompts = [
     type: 'input',
     name: 'sendNotes',
     default: () => getSendNotes(),
-    message: 'Overwrite budget notes with date and balance from SimpleFin each run? (enter "yes" without quotes, to enable):'
+    message: 'Overwrite mapped account notes with date and balance from SimpleFin each run? (enter "yes" without quotes, to enable):'
   }
 ]
 
