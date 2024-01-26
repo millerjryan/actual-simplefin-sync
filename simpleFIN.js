@@ -40,7 +40,10 @@ async function getAccessKey (base64Token) {
 
 async function getTransactions (accessKey, startDate, endDate) {
   const now = new Date()
-  startDate = startDate || new Date(now.getFullYear(), now.getMonth(), -31, 1)
+  let setStartDate = "2023-09-30T00:00:00Z"
+  let setEndDate = "2024-01-26T00:00:00Z"
+  //startDate = startDate || new Date(now.getFullYear(), now.getMonth(), -31, 1)
+  startDate = startDate || new Date(setStartDate)
   endDate = endDate || new Date(now.getFullYear(), now.getMonth() + 1, 1)
   console.log(`${startDate.toISOString().split('T')[0]} - ${endDate.toISOString().split('T')[0]}`)
   return await getAccounts(accessKey, startDate, endDate)
